@@ -67,4 +67,8 @@ public class User extends AbstractEntity implements Serializable {
         }
     }
 
+    @PrePersist
+    private void setPassword() {
+        if (!password.isEmpty()) password = PasswordUtils.digestPassword(password);
+    }
 }
