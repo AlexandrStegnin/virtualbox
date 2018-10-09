@@ -65,7 +65,7 @@ public class UserController {
             return ResponseEntity.ok().header(AUTHORIZATION, "Bearer " + token).body(message);
 
         } catch (Exception e) {
-            message = new GenericResponse.Builder().withMessage(Constants.MESSAGE_LOGIN_UNAUTHORIZED).build();
+            message = new GenericResponse.Builder().withError(Constants.MESSAGE_LOGIN_UNAUTHORIZED).build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
         }
     }
@@ -93,7 +93,7 @@ public class UserController {
         User user = userRepo.findOne(userId);
 
         if (user == null) {
-            message = new GenericResponse.Builder().withMessage("User with id : " + userId + " not found").build();
+            message = new GenericResponse.Builder().withError("User with id : " + userId + " not found").build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
         return ResponseEntity.ok(user);
@@ -123,7 +123,7 @@ public class UserController {
         if (user != null) {
             return ResponseEntity.ok().body(user);
         } else {
-            message = new GenericResponse.Builder().withMessage("User with id " + userId + " not found.").build();
+            message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }
@@ -140,7 +140,7 @@ public class UserController {
             message = new GenericResponse.Builder().withMessage("User with id " + userId + " deleted succesfull.").build();
             return ResponseEntity.ok().body(message);
         } else {
-            message = new GenericResponse.Builder().withMessage("User with id " + userId + " not found.").build();
+            message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }
