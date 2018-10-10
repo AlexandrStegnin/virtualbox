@@ -1,18 +1,23 @@
 package ru.stegnin.virtualbox.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.stegnin.virtualbox.model.Role;
 import ru.stegnin.virtualbox.model.User;
 import ru.stegnin.virtualbox.repository.UserRepository;
 
-import static java.util.Collections.emptyList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private UserRepository userRepository;
+    final private UserRepository userRepository;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
@@ -23,8 +28,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userRepository.findByLogin(login);
         if (user == null) {
-            throw new UsernameNotFoundException(login);
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", login));
         }
-        return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(), emptyList());
+        return new org.springframework.security.core.userdetails.User(
+                user.getLogin(), user.getPassword(), user.isEnabled(), true, true,
+                true, getAuthorities(user.getRoles()));
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(
+            Collection<Role> roles) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        roles.forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getAuthority())));
+        return authorities;
     }
 }

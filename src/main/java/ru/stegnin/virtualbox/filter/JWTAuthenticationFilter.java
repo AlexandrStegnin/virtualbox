@@ -7,41 +7,52 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import ru.stegnin.virtualbox.model.User;
 import ru.stegnin.virtualbox.security.KeyGenerator;
 import ru.stegnin.virtualbox.security.SimpleKeyGenerator;
 import ru.stegnin.virtualbox.support.Constants;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Key;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import static ru.stegnin.virtualbox.support.Constants.*;
 
-public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private AuthenticationManager authenticationManager;
-    private KeyGenerator keyGenerator = new SimpleKeyGenerator();
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+    private AuthenticationManager authenticationManager;
+    private KeyGenerator keyGenerator;
+    private UserDetailsService userDetailsService;
+    private String token = null;
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+        super("/*");
         this.authenticationManager = authenticationManager;
+        this.keyGenerator = new SimpleKeyGenerator();
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
+        System.out.println("### INSIDE attemptAuthentication ###");
         try {
-            User creds = new ObjectMapper()
+            User authUser = new ObjectMapper()
                     .readValue(req.getInputStream(), User.class);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            creds.getLogin(),
-                            creds.getPassword(),
-                            new ArrayList<>())
+                            authUser.getLogin(),
+                            authUser.getPassword(),
+                            authUser.getRoles())
             );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -53,12 +64,23 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) {
-        Key key = keyGenerator.generateKey(Constants.SECRET_KEY);
-        String token = Jwts.builder()
+        final Key key = keyGenerator.generateKey(Constants.SECRET_KEY);
+        final String authorities = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        final String token = Jwts.builder()
                 .setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, key)
+                .claim(AUTHORITIES_KEY, authorities)
                 .compact();
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+    }
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res,
+                         FilterChain chain) throws IOException, ServletException {
+        super.doFilter(req, res, chain);
     }
 }

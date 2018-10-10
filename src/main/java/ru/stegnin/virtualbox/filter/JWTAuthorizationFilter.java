@@ -1,13 +1,14 @@
 package ru.stegnin.virtualbox.filter;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import ru.stegnin.virtualbox.security.KeyGenerator;
 import ru.stegnin.virtualbox.security.SimpleKeyGenerator;
-import ru.stegnin.virtualbox.support.Constants;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,10 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Key;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
-import static ru.stegnin.virtualbox.support.Constants.HEADER_STRING;
-import static ru.stegnin.virtualbox.support.Constants.TOKEN_PREFIX;
+import static ru.stegnin.virtualbox.support.Constants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -43,18 +45,22 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(HEADER_STRING);
-        Key key = keyGenerator.generateKey(Constants.SECRET_KEY);
+        final String token = request.getHeader(HEADER_STRING);
+        final Key key = keyGenerator.generateKey(SECRET_KEY);
         if (token != null) {
-            // parse the token.
-            String replacedToken = token.replace(TOKEN_PREFIX, "");
-            String user = Jwts.parser()
-                    .setSigningKey(key)
-                    .parseClaimsJws(replacedToken)
-                    .getBody()
-                    .getSubject();
+            final String replacedToken = token.replace(TOKEN_PREFIX, "");
+
+            final Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(replacedToken).getBody();
+
+            final Collection authorities =
+                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+
+            final String user = claims.getSubject();
+
             if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(user, null, authorities);
             }
             return null;
         }

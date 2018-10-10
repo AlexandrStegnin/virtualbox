@@ -1,16 +1,12 @@
 package ru.stegnin.virtualbox.security;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.util.Base64;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class PasswordUtils {
     public static String digestPassword(String plainTextPassword) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(plainTextPassword.getBytes(StandardCharsets.UTF_8));
-            byte[] passwordDigest = md.digest();
-            return new String(Base64.getEncoder().encode(passwordDigest));
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            return encoder.encode(plainTextPassword);
         } catch (Exception e) {
             throw new RuntimeException("Exception encoding password", e);
         }
