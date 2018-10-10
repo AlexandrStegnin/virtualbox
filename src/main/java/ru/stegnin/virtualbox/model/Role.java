@@ -1,10 +1,12 @@
 package ru.stegnin.virtualbox.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -17,7 +19,8 @@ import java.util.Set;
 @ToString(exclude = "users")
 @JsonIgnoreProperties("users")
 @EqualsAndHashCode(callSuper = true, exclude = "users")
-public class Role extends AbstractEntity implements Serializable {
+public class Role extends AbstractEntity implements Serializable, GrantedAuthority {
+    @JsonIgnore
     private String name;
 
     @ManyToMany(mappedBy = "roles")
@@ -38,5 +41,10 @@ public class Role extends AbstractEntity implements Serializable {
         public Role build() {
             return newRole;
         }
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }

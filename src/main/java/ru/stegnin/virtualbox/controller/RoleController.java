@@ -11,8 +11,6 @@ import ru.stegnin.virtualbox.repository.RoleRepository;
 import ru.stegnin.virtualbox.support.Constants;
 import ru.stegnin.virtualbox.support.GenericResponse;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.Produces;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -25,13 +23,11 @@ public class RoleController {
 
     private final RoleRepository roleRepo;
     private final AuthRepository auth;
-    private final ServletContext context;
 
     @Autowired
-    public RoleController(RoleRepository roleRepo, AuthRepository auth, ServletContext context) {
+    public RoleController(RoleRepository roleRepo, AuthRepository auth) {
         this.roleRepo = roleRepo;
         this.auth = auth;
-        this.context = context;
     }
 
     /**
@@ -79,8 +75,7 @@ public class RoleController {
      * @param role - данные роли для изменения в формате json
      * @return - response с сообщением
      */
-    @PutMapping(value = Constants.API_ROLES_ROLE_ID)
-    @Produces(MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = Constants.API_ROLES_ROLE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(@PathVariable(Constants.API_ROLE_ID) String roleId, @RequestBody Role role) {
         role.setId(roleId);
         role = roleRepo.update(role);

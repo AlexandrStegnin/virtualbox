@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import ru.stegnin.virtualbox.model.User;
 import ru.stegnin.virtualbox.repository.AbstractRepository;
-import ru.stegnin.virtualbox.repository.UserRepository;
 import ru.stegnin.virtualbox.repository.AuthRepository;
-import ru.stegnin.virtualbox.security.PasswordUtils;
+import ru.stegnin.virtualbox.repository.UserRepository;
 import ru.stegnin.virtualbox.support.Constants;
 
 import javax.servlet.ServletContext;
@@ -38,6 +37,7 @@ public class AuthService extends AbstractRepository implements AuthRepository {
                 .setIssuer(context.getContextPath())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(LocalDateTime.now().plusMinutes(15L).atZone(ZoneId.systemDefault()).toInstant()))
+                // FIXME: 10.10.2018 Добавить Claims authorities
                 .signWith(SignatureAlgorithm.HS512, key)
                 .compact();
         LOGGER.info("#### generating token for a key : " + jwtToken + " - " + key);
@@ -49,7 +49,8 @@ public class AuthService extends AbstractRepository implements AuthRepository {
         if (login.isEmpty()) return false;
         if (password.isEmpty()) return false;
         final User user = userRepo.findByLogin(login);
-        return user != null && user.getPassword().equals(PasswordUtils.digestPassword(password));
+//        String digestPassword = PasswordUtils.digestPassword(password);
+        return user != null && user.getPassword().equals(password);
     }
 
     @Override

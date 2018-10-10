@@ -32,7 +32,7 @@ public class User extends AbstractEntity implements Serializable {
 
     private boolean enabled;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "UsersRoles",
             joinColumns = { @JoinColumn(name = "UserId") },
