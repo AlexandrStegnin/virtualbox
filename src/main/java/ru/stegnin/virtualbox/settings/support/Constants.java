@@ -3,6 +3,8 @@ package ru.stegnin.virtualbox.settings.support;
 public class Constants {
     public static final String API = "/api";
     public static final String AUTHORITIES_KEY = "authorities";
+    public static final String SERVER_URL = "http://localhost:8282/rmi";
+    public static final String LOGOUT = "/logout";
 
     //    API для работы с User
     public static final String API_USERS = "/users";
@@ -25,5 +27,6 @@ public class Constants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String API_AUTH_URL = "/api/users/auth";
+    public static final String ERROR = "ERROR Message";
 
 }

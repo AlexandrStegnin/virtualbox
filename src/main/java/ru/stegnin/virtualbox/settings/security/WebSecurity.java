@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.stegnin.virtualbox.api.service.AuthService;
 import ru.stegnin.virtualbox.settings.filter.JWTAuthenticationFilter;
 import ru.stegnin.virtualbox.settings.filter.JWTAuthorizationFilter;
 import ru.stegnin.virtualbox.settings.support.Constants;
@@ -26,6 +27,7 @@ import ru.stegnin.virtualbox.settings.support.Constants;
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
+    private AuthService authService;
 
     @Bean
     public PasswordEncoder bCryptPasswordEncoder() {
@@ -33,8 +35,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public WebSecurity(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
+    public WebSecurity(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, AuthService authService) {
         this.userDetailsService = userDetailsService;
+        this.authService = authService;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JWTAuthorizationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthenticationFilter(authenticationManager(), userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTAuthenticationFilter(authenticationManager(), authService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

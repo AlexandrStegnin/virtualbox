@@ -1,6 +1,7 @@
 package ru.stegnin.virtualbox.settings.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,13 +9,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import ru.stegnin.virtualbox.api.model.User;
+import ru.stegnin.virtualbox.api.service.AuthService;
 import ru.stegnin.virtualbox.settings.security.KeyGenerator;
 import ru.stegnin.virtualbox.settings.security.SimpleKeyGenerator;
 import ru.stegnin.virtualbox.settings.support.Constants;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -30,31 +32,39 @@ import java.util.stream.Collectors;
 public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private AuthenticationManager authenticationManager;
     private KeyGenerator keyGenerator;
-    private UserDetailsService userDetailsService;
-    private String token = null;
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+    private AuthService authService;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, AuthService authService) {
         super("/*");
         this.authenticationManager = authenticationManager;
         this.keyGenerator = new SimpleKeyGenerator();
-        this.userDetailsService = userDetailsService;
+        this.authService = authService;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
-        System.out.println("### INSIDE attemptAuthentication ###");
         try {
             User authUser = new ObjectMapper()
                     .readValue(req.getInputStream(), User.class);
-            return authenticationManager.authenticate(
+            Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authUser.getLogin(),
                             authUser.getPassword(),
-                            authUser.getRoles())
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                            authUser.getRoles()));
+            if (auth.isAuthenticated()) {
+                if (authService.openSession(authUser.getLogin(), authUser.getPassword())) {
+                    System.out.printf("User with login '%s' authorized successful, session is open", authUser.getLogin());
+                }
+            }
+            return auth;
+        } catch (MismatchedInputException ex) {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            res.addHeader(Constants.ERROR, "User unauthorized!");
+        } catch (IOException | RepositoryException ex) {
+            throw new RuntimeException(ex);
         }
+        return null;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.stegnin.virtualbox.api.model.User;
 import ru.stegnin.virtualbox.api.repository.AuthRepository;
@@ -34,6 +35,7 @@ public class UserController {
 
     /**
      * Создать пользователя
+     *
      * @param user - пользователь в формате json
      * @return - response с сообщением
      */
@@ -42,11 +44,13 @@ public class UserController {
     create(@RequestBody User user) {
         user = userRepo.create(user);
         message = new GenericResponse.Builder().withMessage("User : " + user + " created").build();
+        logger.info(message.getMessage());
         return ResponseEntity.created(auth.getUri(this.getClass(), "create", (Object) user)).body(user);
     }
 
     /**
      * Найти пользователя по id
+     *
      * @param userId - id пользователя
      * @return - response с сообщением
      */
@@ -54,16 +58,18 @@ public class UserController {
     @GetMapping(value = Constants.API_USERS_USER_ID)
     public ResponseEntity findById(@PathVariable(Constants.API_USER_ID) String userId) {
         User user = userRepo.findOne(userId);
-
         if (user == null) {
             message = new GenericResponse.Builder().withError("User with id : " + userId + " not found").build();
+            logger.warning(message.getError());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
+        logger.info(message.getMessage());
         return ResponseEntity.ok(user);
     }
 
     /**
      * Достать всех пользователей
+     *
      * @return - response со списком пользователей
      */
     @GetMapping
@@ -74,8 +80,9 @@ public class UserController {
 
     /**
      * Изменить пользователя
+     *
      * @param userId - id пользователя
-     * @param user - данные пользователя для изменения в формате json
+     * @param user   - данные пользователя для изменения в формате json
      * @return - response с сообщением
      */
     @PutMapping(value = Constants.API_USERS_USER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,12 +93,14 @@ public class UserController {
             return ResponseEntity.ok().body(user);
         } else {
             message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
+            logger.warning(message.getError());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }
 
     /**
      * Удалить пользователя по id
+     *
      * @param userId - id пользователя
      * @return - response с сообщением
      */
@@ -100,10 +109,26 @@ public class UserController {
         User user = userRepo.delete(userId);
         if (user != null) {
             message = new GenericResponse.Builder().withMessage("User with id " + userId + " deleted successful.").build();
+            logger.info(message.getMessage());
             return ResponseEntity.ok().body(message);
         } else {
             message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
+            logger.warning(message.getError());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
+    }
+
+    /**
+     * выйти из системы
+     *
+     * @return - response с сообщением
+     */
+    @PostMapping(value = Constants.LOGOUT)
+    public ResponseEntity logout() {
+        SecurityContextHolder.clearContext();
+        String msg = "successful.";
+        if (!auth.closeSession()) msg = "failed.";
+        message = new GenericResponse.Builder().withMessage("User logout " + msg).build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
     }
 }

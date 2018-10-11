@@ -1,6 +1,7 @@
 package ru.stegnin.virtualbox.settings.filter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,18 +39,23 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(req, res);
             return;
         }
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(req, res);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request, HttpServletResponse response) {
         final String token = request.getHeader(Constants.HEADER_STRING);
         final Key key = keyGenerator.generateKey(Constants.SECRET_KEY);
         if (token != null) {
             final String replacedToken = token.replace(Constants.TOKEN_PREFIX, "");
-
-            final Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(replacedToken).getBody();
+            Claims claims;
+            try {
+                claims = Jwts.parser().setSigningKey(key).parseClaimsJws(replacedToken).getBody();
+            } catch (ExpiredJwtException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return null;
+            }
 
             final Collection authorities =
                     Arrays.stream(claims.get(Constants.AUTHORITIES_KEY).toString().split(","))
