@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.security;
+package ru.stegnin.virtualbox.settings.security;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;

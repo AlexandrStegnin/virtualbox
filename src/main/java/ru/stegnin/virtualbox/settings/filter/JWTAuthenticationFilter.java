@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.filter;
+package ru.stegnin.virtualbox.settings.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -10,10 +10,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import ru.stegnin.virtualbox.model.User;
-import ru.stegnin.virtualbox.security.KeyGenerator;
-import ru.stegnin.virtualbox.security.SimpleKeyGenerator;
-import ru.stegnin.virtualbox.support.Constants;
+import ru.stegnin.virtualbox.api.model.User;
+import ru.stegnin.virtualbox.settings.security.KeyGenerator;
+import ru.stegnin.virtualbox.settings.security.SimpleKeyGenerator;
+import ru.stegnin.virtualbox.settings.support.Constants;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
-
-import static ru.stegnin.virtualbox.support.Constants.*;
 
 
 public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -71,11 +69,11 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
         final String token = Jwts.builder()
                 .setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, key)
-                .claim(AUTHORITIES_KEY, authorities)
+                .claim(Constants.AUTHORITIES_KEY, authorities)
                 .compact();
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        res.addHeader(Constants.HEADER_STRING, Constants.TOKEN_PREFIX + token);
     }
 
     @Override

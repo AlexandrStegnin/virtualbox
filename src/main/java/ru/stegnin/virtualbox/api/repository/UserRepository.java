@@ -1,6 +1,6 @@
-package ru.stegnin.virtualbox.repository;
+package ru.stegnin.virtualbox.api.repository;
 
-import ru.stegnin.virtualbox.model.User;
+import ru.stegnin.virtualbox.api.model.User;
 
 import java.util.List;
 import java.util.Optional;

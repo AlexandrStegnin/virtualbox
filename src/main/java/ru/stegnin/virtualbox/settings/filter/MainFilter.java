@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.filter;
+package ru.stegnin.virtualbox.settings.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

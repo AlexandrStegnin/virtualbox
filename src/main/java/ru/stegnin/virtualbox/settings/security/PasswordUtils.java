@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.security;
+package ru.stegnin.virtualbox.settings.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

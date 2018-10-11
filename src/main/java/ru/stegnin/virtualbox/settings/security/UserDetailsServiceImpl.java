@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.security;
+package ru.stegnin.virtualbox.settings.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,9 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.stegnin.virtualbox.model.Role;
-import ru.stegnin.virtualbox.model.User;
-import ru.stegnin.virtualbox.repository.UserRepository;
+import ru.stegnin.virtualbox.api.model.Role;
+import ru.stegnin.virtualbox.api.model.User;
+import ru.stegnin.virtualbox.api.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;

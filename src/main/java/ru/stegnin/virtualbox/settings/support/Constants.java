@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.support;
+package ru.stegnin.virtualbox.settings.support;
 
 public class Constants {
     public static final String API = "/api";

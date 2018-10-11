@@ -1,15 +1,15 @@
-package ru.stegnin.virtualbox.controller;
+package ru.stegnin.virtualbox.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.stegnin.virtualbox.model.Role;
-import ru.stegnin.virtualbox.repository.AuthRepository;
-import ru.stegnin.virtualbox.repository.RoleRepository;
-import ru.stegnin.virtualbox.support.Constants;
-import ru.stegnin.virtualbox.support.GenericResponse;
+import ru.stegnin.virtualbox.api.repository.AuthRepository;
+import ru.stegnin.virtualbox.api.model.Role;
+import ru.stegnin.virtualbox.api.repository.RoleRepository;
+import ru.stegnin.virtualbox.settings.support.Constants;
+import ru.stegnin.virtualbox.settings.support.GenericResponse;
 
 import java.util.ArrayList;
 import java.util.List;

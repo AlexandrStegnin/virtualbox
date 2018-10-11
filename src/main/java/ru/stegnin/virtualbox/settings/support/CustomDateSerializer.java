@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.support;
+package ru.stegnin.virtualbox.settings.support;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

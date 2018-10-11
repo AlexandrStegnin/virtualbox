@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.model;
+package ru.stegnin.virtualbox.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -1,16 +1,19 @@
-package ru.stegnin.virtualbox.service;
+package ru.stegnin.virtualbox.api.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
-import ru.stegnin.virtualbox.model.User;
-import ru.stegnin.virtualbox.model.User_;
-import ru.stegnin.virtualbox.repository.AbstractRepository;
-import ru.stegnin.virtualbox.repository.UserRepository;
-import ru.stegnin.virtualbox.security.PasswordUtils;
+import ru.stegnin.virtualbox.api.model.User;
+import ru.stegnin.virtualbox.api.model.User_;
+import ru.stegnin.virtualbox.api.repository.AbstractRepository;
+import ru.stegnin.virtualbox.api.repository.UserRepository;
+import ru.stegnin.virtualbox.settings.security.PasswordUtils;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

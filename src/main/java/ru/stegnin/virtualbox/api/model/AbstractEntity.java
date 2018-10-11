@@ -1,11 +1,11 @@
-package ru.stegnin.virtualbox.model;
+package ru.stegnin.virtualbox.api.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.stegnin.virtualbox.support.CustomDateSerializer;
+import ru.stegnin.virtualbox.settings.support.CustomDateSerializer;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;

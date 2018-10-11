@@ -1,11 +1,11 @@
-package ru.stegnin.virtualbox.service;
+package ru.stegnin.virtualbox.api.service;
 
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
-import ru.stegnin.virtualbox.model.Role;
-import ru.stegnin.virtualbox.model.Role_;
-import ru.stegnin.virtualbox.repository.AbstractRepository;
-import ru.stegnin.virtualbox.repository.RoleRepository;
+import ru.stegnin.virtualbox.api.model.Role;
+import ru.stegnin.virtualbox.api.model.Role_;
+import ru.stegnin.virtualbox.api.repository.AbstractRepository;
+import ru.stegnin.virtualbox.api.repository.RoleRepository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;

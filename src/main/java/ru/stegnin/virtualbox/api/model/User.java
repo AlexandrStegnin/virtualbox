@@ -1,11 +1,11 @@
-package ru.stegnin.virtualbox.model;
+package ru.stegnin.virtualbox.api.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import ru.stegnin.virtualbox.security.PasswordUtils;
+import ru.stegnin.virtualbox.settings.security.PasswordUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;

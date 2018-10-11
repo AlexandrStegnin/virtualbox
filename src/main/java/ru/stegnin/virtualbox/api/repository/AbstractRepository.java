@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.repository;
+package ru.stegnin.virtualbox.api.repository;
 
 import org.springframework.stereotype.Repository;
 

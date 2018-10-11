@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.filter;
+package ru.stegnin.virtualbox.settings.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -7,8 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import ru.stegnin.virtualbox.security.KeyGenerator;
-import ru.stegnin.virtualbox.security.SimpleKeyGenerator;
+import ru.stegnin.virtualbox.settings.security.KeyGenerator;
+import ru.stegnin.virtualbox.settings.security.SimpleKeyGenerator;
+import ru.stegnin.virtualbox.settings.support.Constants;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,8 +20,6 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import static ru.stegnin.virtualbox.support.Constants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -34,8 +33,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader(HEADER_STRING);
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+        String header = req.getHeader(Constants.HEADER_STRING);
+        if (header == null || !header.startsWith(Constants.TOKEN_PREFIX)) {
             chain.doFilter(req, res);
             return;
         }
@@ -45,15 +44,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        final String token = request.getHeader(HEADER_STRING);
-        final Key key = keyGenerator.generateKey(SECRET_KEY);
+        final String token = request.getHeader(Constants.HEADER_STRING);
+        final Key key = keyGenerator.generateKey(Constants.SECRET_KEY);
         if (token != null) {
-            final String replacedToken = token.replace(TOKEN_PREFIX, "");
+            final String replacedToken = token.replace(Constants.TOKEN_PREFIX, "");
 
             final Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(replacedToken).getBody();
 
             final Collection authorities =
-                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                    Arrays.stream(claims.get(Constants.AUTHORITIES_KEY).toString().split(","))
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 

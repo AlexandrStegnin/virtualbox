@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.security;
+package ru.stegnin.virtualbox.settings.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,10 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.stegnin.virtualbox.filter.JWTAuthenticationFilter;
-import ru.stegnin.virtualbox.filter.JWTAuthorizationFilter;
-
-import static ru.stegnin.virtualbox.support.Constants.*;
+import ru.stegnin.virtualbox.settings.filter.JWTAuthenticationFilter;
+import ru.stegnin.virtualbox.settings.filter.JWTAuthorizationFilter;
+import ru.stegnin.virtualbox.settings.support.Constants;
 
 @Configuration
 @EnableGlobalMethodSecurity(
@@ -41,7 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, API_AUTH_URL).permitAll()
+                .antMatchers(HttpMethod.POST, Constants.API_AUTH_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JWTAuthorizationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
