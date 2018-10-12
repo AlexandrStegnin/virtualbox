@@ -54,13 +54,15 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
                             authUser.getRoles()));
             if (auth.isAuthenticated()) {
                 if (authService.openSession(authUser.getLogin(), authUser.getPassword())) {
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    res.setHeader(Constants.SUCCESS_MESSAGE, Constants.MESSAGE_LOGIN_SUCCESSFUL);
                     System.out.printf("User with login '%s' authorized successful, session is open", authUser.getLogin());
                 }
             }
             return auth;
         } catch (MismatchedInputException ex) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            res.addHeader(Constants.ERROR, "User unauthorized!");
+            res.addHeader(Constants.ERROR_MESSAGE, "User unauthorized!");
         } catch (IOException | RepositoryException ex) {
             throw new RuntimeException(ex);
         }

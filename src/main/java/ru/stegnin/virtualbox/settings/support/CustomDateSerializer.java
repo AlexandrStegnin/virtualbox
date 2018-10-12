@@ -3,16 +3,15 @@ package ru.stegnin.virtualbox.settings.support;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+@Component
 public class CustomDateSerializer extends StdSerializer<LocalDate> {
-    private SimpleDateFormat formatter
-            = new SimpleDateFormat("yyyy-MM-dd");
 
     public CustomDateSerializer() {
         this(null);

@@ -123,7 +123,7 @@ public class UserController {
      *
      * @return - response с сообщением
      */
-    @PostMapping(value = Constants.LOGOUT)
+    @PostMapping(value = Constants.LOGOUT_URL)
     public ResponseEntity logout() {
         SecurityContextHolder.clearContext();
         String msg = "successful.";
