@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.stegnin.virtualbox.api.model.User;
 import ru.stegnin.virtualbox.api.repository.AuthRepository;
@@ -27,13 +26,11 @@ public class UserController {
 
     private final UserRepository userRepo;
     private final AuthRepository auth;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserController(UserRepository userRepo, AuthRepository auth, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserController(UserRepository userRepo, AuthRepository auth) {
         this.userRepo = userRepo;
         this.auth = auth;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     /**
