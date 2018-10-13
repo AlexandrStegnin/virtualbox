@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.stegnin.virtualbox.api.model.User;
 import ru.stegnin.virtualbox.api.repository.AuthRepository;
@@ -18,19 +19,21 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping(Constants.API + Constants.API_USERS)
+@RequestMapping(value = Constants.API + Constants.API_USERS)
 public class UserController {
 
-    private Logger logger = Logger.getLogger(UserController.class.getName());
+    private final Logger logger = Logger.getLogger(UserController.class.getName());
     private GenericResponse message;
 
     private final UserRepository userRepo;
     private final AuthRepository auth;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserController(UserRepository userRepo, AuthRepository auth) {
+    public UserController(UserRepository userRepo, AuthRepository auth, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepo = userRepo;
         this.auth = auth;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     /**
@@ -61,8 +64,9 @@ public class UserController {
         if (user == null) {
             message = new GenericResponse.Builder().withError("User with id : " + userId + " not found").build();
             logger.warning(message.getError());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.getError());
         }
+        message = new GenericResponse.Builder().withMessage(String.format("User with id : '%s' founded", userId)).build();
         logger.info(message.getMessage());
         return ResponseEntity.ok(user);
     }
@@ -90,11 +94,11 @@ public class UserController {
         user.setId(userId);
         user = userRepo.update(user);
         if (user != null) {
-            return ResponseEntity.ok().body(user);
+            return ResponseEntity.ok(user);
         } else {
             message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
             logger.warning(message.getError());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.getError());
         }
     }
 
@@ -110,11 +114,11 @@ public class UserController {
         if (user != null) {
             message = new GenericResponse.Builder().withMessage("User with id " + userId + " deleted successful.").build();
             logger.info(message.getMessage());
-            return ResponseEntity.ok().body(message);
+            return ResponseEntity.ok().body(message.getMessage());
         } else {
             message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
             logger.warning(message.getError());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.getError());
         }
     }
 
@@ -129,6 +133,6 @@ public class UserController {
         String msg = "successful.";
         if (!auth.closeSession()) msg = "failed.";
         message = new GenericResponse.Builder().withMessage("User logout " + msg).build();
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message.getMessage());
     }
 }

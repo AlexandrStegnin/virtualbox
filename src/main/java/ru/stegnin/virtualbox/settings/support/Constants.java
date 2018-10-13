@@ -28,4 +28,12 @@ public class Constants {
     public static final String ERROR_MESSAGE = "ERROR Message";
     public static final String SUCCESS_MESSAGE = "SUCCESS Message";
 
+    //    Для работы с репозиторием JackRabbit
+    public static final String API_JR_WORKSPACE = "/workspace";
+    public static final String API_JR_FOLDERS_FOLDER_NAME = "/{folderName}";
+    public static final String API_JR_FOLDER_NAME = "folderName";
+    public static final String JR_NT_FOLDER = "nt:folder";
+    public static final String JR_NT_FILE = "nt:file";
+
+
 }

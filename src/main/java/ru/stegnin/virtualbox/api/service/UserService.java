@@ -7,7 +7,6 @@ import ru.stegnin.virtualbox.api.model.User;
 import ru.stegnin.virtualbox.api.model.User_;
 import ru.stegnin.virtualbox.api.repository.AbstractRepository;
 import ru.stegnin.virtualbox.api.repository.UserRepository;
-import ru.stegnin.virtualbox.settings.security.PasswordUtils;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -53,11 +52,6 @@ public class UserService extends AbstractRepository implements UserRepository {
         User oldUser = em.find(User.class, user.getId());
         if (user.getLogin().isEmpty()) {
             user.setLogin(oldUser.getLogin());
-        }
-        if (user.getPassword().isEmpty()) {
-            user.setPassword(oldUser.getPassword());
-        } else {
-            user.setPassword(PasswordUtils.digestPassword(user.getPassword()));
         }
         if (user.getEmail().isEmpty()) {
             user.setEmail(oldUser.getEmail());

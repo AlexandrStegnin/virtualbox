@@ -1,44 +1,28 @@
 package ru.stegnin.virtualbox.settings.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.stegnin.virtualbox.api.model.Role;
-import ru.stegnin.virtualbox.api.model.User;
 import ru.stegnin.virtualbox.api.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import static java.util.Collections.emptyList;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    final private UserRepository userRepository;
+    private UserRepository applicationUserRepository;
 
-    @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserRepository applicationUserRepository) {
+        this.applicationUserRepository = applicationUserRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(login);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", login));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        ru.stegnin.virtualbox.api.model.User applicationUser = applicationUserRepository.findByLogin(username);
+        if (applicationUser == null) {
+            throw new UsernameNotFoundException(username);
         }
-        return new org.springframework.security.core.userdetails.User(
-                user.getLogin(), user.getPassword(), user.isEnabled(), true, true,
-                true, getAuthorities(user.getRoles()));
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(
-            Collection<Role> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        roles.forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getAuthority())));
-        return authorities;
+        return new User(applicationUser.getLogin(), applicationUser.getPassword(), emptyList());
     }
 }

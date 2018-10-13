@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import ru.stegnin.virtualbox.settings.security.PasswordUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -65,10 +64,5 @@ public class User extends AbstractEntity implements Serializable {
         public User build() {
             return newUser;
         }
-    }
-
-    @PrePersist
-    private void setPassword() {
-        if (!password.isEmpty()) password = PasswordUtils.digestPassword(password);
     }
 }

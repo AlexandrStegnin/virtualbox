@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import ru.stegnin.virtualbox.api.repository.AuthRepository;
 import ru.stegnin.virtualbox.api.repository.AbstractRepository;
-import ru.stegnin.virtualbox.server.ServerRepository;
+import ru.stegnin.virtualbox.server.repository.ServerRepository;
 
 import javax.jcr.RepositoryException;
 import java.net.MalformedURLException;
