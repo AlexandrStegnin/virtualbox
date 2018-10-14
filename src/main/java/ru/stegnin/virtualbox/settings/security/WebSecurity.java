@@ -12,8 +12,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import ru.stegnin.virtualbox.api.repository.AuthRepository;
-import ru.stegnin.virtualbox.settings.support.Constants;
 
+import static ru.stegnin.virtualbox.settings.support.Constants.API;
 import static ru.stegnin.virtualbox.settings.support.Constants.SIGN_UP_URL;
 
 @EnableWebSecurity
@@ -31,7 +31,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, Constants.API + SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.POST, API + SIGN_UP_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), authRepository))
