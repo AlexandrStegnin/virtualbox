@@ -21,12 +21,13 @@ public class Constants {
     public static final String API_ROLES_ROLE_ID = "/{roleId}";
 
     //    Security Constants
-    public static final String SECRET_KEY = "SecretKeyToGenJWTs";
-    public static final long EXPIRATION_TIME = 900_000; // 15 minutes
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String HEADER_STRING = "Authorization";
     public static final String ERROR_MESSAGE = "ERROR Message";
     public static final String SUCCESS_MESSAGE = "SUCCESS Message";
+    public static final String SECRET = "SecretKeyToGenJWTs";
+    public static final long EXPIRATION_TIME = 864_000_000; // 10 days
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
+    public static final String SIGN_UP_URL = "/users/sign-up";
 
     //    Для работы с репозиторием JackRabbit
     public static final String API_JR_WORKSPACE = "/workspace";
