@@ -32,15 +32,13 @@ public class FolderRemoteService extends AbstractServerRepository implements Fol
         return newNode;
     }
 
-    @Nullable
     @Override
-    public Node remove(String folderName) throws RepositoryException {
+    public void remove(String folderName) throws RepositoryException {
         Node folderToDelete = findByFolderName(folderName);
         if (folderToDelete != null) {
             folderToDelete.remove();
             session.save();
         }
-        return null;
     }
 
     @Nullable
