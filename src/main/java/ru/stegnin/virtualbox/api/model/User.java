@@ -34,8 +34,35 @@ public class User extends AbstractEntity implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "UsersRoles",
-            joinColumns = {@JoinColumn(name = "UserId")},
-            inverseJoinColumns = {@JoinColumn(name = "RoleId")}
+            joinColumns = { @JoinColumn(name = "UserId") },
+            inverseJoinColumns = { @JoinColumn(name = "RoleId") }
     )
     private Set<Role> roles;
+
+    public static class Builder {
+        private User newUser;
+
+        public Builder() {
+            newUser = new User();
+        }
+
+        public Builder withLogin(String login) {
+            newUser.login = login;
+            return this;
+        }
+
+        public Builder withEmail(String email) {
+            newUser.email = email;
+            return this;
+        }
+
+        public Builder withPassword(String password) {
+            newUser.password = password;
+            return this;
+        }
+
+        public User build() {
+            return newUser;
+        }
+    }
 }

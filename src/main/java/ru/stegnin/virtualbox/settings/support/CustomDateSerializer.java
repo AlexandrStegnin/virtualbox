@@ -22,7 +22,7 @@ public class CustomDateSerializer extends StdSerializer<LocalDate> {
     }
 
     @Override
-    public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider arg2)
+    public void serialize (LocalDate value, JsonGenerator gen, SerializerProvider arg2)
             throws IOException {
         gen.writeString(value.format(DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())));
     }
