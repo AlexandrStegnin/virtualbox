@@ -26,23 +26,6 @@ public class Role extends AbstractEntity implements Serializable, GrantedAuthori
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public static class Builder {
-        private Role newRole;
-
-        public Builder() {
-            newRole = new Role();
-        }
-
-        public Builder withName(String name) {
-            newRole.name = name;
-            return this;
-        }
-
-        public Role build() {
-            return newRole;
-        }
-    }
-
     @Override
     public String getAuthority() {
         return name;

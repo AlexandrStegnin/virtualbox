@@ -12,6 +12,7 @@ public class VirtualboxApplication {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     public static void main(String[] args) {
         SpringApplication.run(VirtualboxApplication.class, args);
     }

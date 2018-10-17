@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static ru.stegnin.virtualbox.settings.security.SecurityConstants.*;
+import static ru.stegnin.virtualbox.settings.support.Constants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 

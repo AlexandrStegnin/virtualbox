@@ -15,7 +15,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -35,11 +34,6 @@ public class UserService extends AbstractRepository implements UserRepository {
     @Override
     public User findOne(String userId) {
         return em.find(User.class, userId);
-    }
-
-    @Override
-    public void delete(User user) {
-        em.remove(em.find(User.class, user.getId()));
     }
 
     @Override
@@ -76,26 +70,6 @@ public class UserService extends AbstractRepository implements UserRepository {
         criteriaQuery.select(root);
         TypedQuery<User> query = em.createQuery(criteriaQuery);
         return query.getSingleResult();
-    }
-
-    @Override
-    public Optional<User> findByEmail(String email) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);
-        cq.select(root);
-        Predicate predicate = cb.like(root.get(User_.email), email);
-        cq.where(predicate);
-        TypedQuery<User> query = em.createQuery(cq);
-        return Optional.ofNullable(query.getSingleResult());
-    }
-
-    @Override
-    public void init(String login, String email, String password) {
-        if (!isLoginUnique(login)) return;
-        if (!isEmailUnique(email)) return;
-        User user = new User.Builder().withLogin(login).withEmail(email).withPassword(password).build();
-        create(user);
     }
 
     @Override
