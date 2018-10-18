@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -19,32 +18,10 @@ import java.util.Set;
 @ToString(exclude = "users")
 @JsonIgnoreProperties("users")
 @EqualsAndHashCode(callSuper = true, exclude = "users")
-public class Role extends AbstractEntity implements Serializable, GrantedAuthority {
+public class Role extends AbstractEntity implements Serializable {
     @JsonIgnore
     private String name;
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-
-    public static class Builder {
-        private Role newRole;
-
-        public Builder() {
-            newRole = new Role();
-        }
-
-        public Builder withName(String name) {
-            newRole.name = name;
-            return this;
-        }
-
-        public Role build() {
-            return newRole;
-        }
-    }
-
-    @Override
-    public String getAuthority() {
-        return name;
-    }
 }

@@ -91,14 +91,6 @@ public class UserService extends AbstractRepository implements UserRepository {
     }
 
     @Override
-    public void init(String login, String email, String password) {
-        if (!isLoginUnique(login)) return;
-        if (!isEmailUnique(email)) return;
-        User user = new User.Builder().withLogin(login).withEmail(email).withPassword(password).build();
-        create(user);
-    }
-
-    @Override
     public boolean isLoginUnique(@Nullable final String login) {
         if (login == null || login.isEmpty()) return false;
         return countByCondition(login, null) == 0;

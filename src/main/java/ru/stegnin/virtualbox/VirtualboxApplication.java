@@ -8,12 +8,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class VirtualboxApplication {
 
+    public static void main(String[] args) {
+        SpringApplication.run(VirtualboxApplication.class, args);
+    }
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-    public static void main(String[] args) {
-        SpringApplication.run(VirtualboxApplication.class, args);
     }
 
     // TODO: 14.10.2018 Добавить пользователям workspaces, settings

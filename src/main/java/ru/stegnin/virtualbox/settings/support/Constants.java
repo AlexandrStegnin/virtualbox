@@ -8,6 +8,46 @@ public class Constants {
     public static final String SERVER_URL = "http://localhost:8282/rmi";
     public static final String LOGOUT_URL = "/logout";
     public static final String MESSAGE_LOGIN_SUCCESSFUL = "User log in successful, session opened.";
+    public static final String LOGIN_URL = "/login";
+    public static final String[] ALL_HTTP_MATCHERS = {
+            "/VAADIN/**", "/HEARTBEAT/**", "/UIDL/**", "/resources/**",
+            "/login", "/login**", "/login/**", "/manifest.json", "/icons/**", "/images/**",
+            // (development mode) static resources
+            "/frontend/**",
+            // (development mode) webjars
+            "/webjars/**",
+            // (development mode) H2 debugging console
+            "/h2-console/**",
+            // (production mode) static resources
+            "/frontend-es5/**", "/frontend-es6/**"
+    };
+
+    public static final String[] ALL_WEB_IGNORING_MATCHERS = {
+            // Vaadin Flow static resources
+            "/VAADIN/**",
+
+            // the standard favicon URI
+            "/favicon.ico",
+
+            // web application manifest
+            "/manifest.json",
+
+            // icons and images
+            "/icons/**",
+            "/images/**",
+
+            // (development mode) static resources
+            "/frontend/**",
+
+            // (development mode) webjars
+            "/webjars/**",
+
+            // (development mode) H2 debugging console
+            "/h2-console/**",
+
+            // (production mode) static resources
+            "/frontend-es5/**", "/frontend-es6/**"
+    };
 
     //    API для работы с User
     public static final String API_USERS = "/users";

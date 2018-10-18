@@ -20,8 +20,6 @@ public interface UserRepository {
 
     Optional<User> findByEmail(String email);
 
-    void init(String login, String email, String password);
-
     User delete(String userId);
 
     boolean isLoginUnique(String login);

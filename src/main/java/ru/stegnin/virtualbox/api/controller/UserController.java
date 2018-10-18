@@ -22,10 +22,9 @@ import java.util.logging.Logger;
 public class UserController {
 
     private final Logger logger = Logger.getLogger(UserController.class.getName());
-    private GenericResponse message;
-
     private final UserRepository userRepo;
     private final AuthRepository auth;
+    private GenericResponse message;
 
     @Autowired
     public UserController(UserRepository userRepo, AuthRepository auth) {

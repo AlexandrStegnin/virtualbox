@@ -1,54 +1,99 @@
 package ru.stegnin.virtualbox.settings.security;
 
+import com.vaadin.flow.spring.annotation.EnableVaadin;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import ru.stegnin.virtualbox.api.repository.AuthRepository;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
-import static ru.stegnin.virtualbox.settings.support.Constants.API;
-import static ru.stegnin.virtualbox.settings.support.Constants.SIGN_UP_URL;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
+import static ru.stegnin.virtualbox.settings.support.Constants.*;
+
+@EnableVaadin
+@Configuration
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private AuthRepository authRepository;
 
-    public WebSecurity(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, AuthRepository authRepository) {
+    public WebSecurity(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.authRepository = authRepository;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, API + SIGN_UP_URL).permitAll()
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers(ALL_HTTP_MATCHERS).permitAll()
+                .regexMatchers(HttpMethod.POST, "/\\?v-r=.*").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), authRepository))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                // this disables session creation on Spring Security
+                .formLogin().loginPage(LOGIN_URL).permitAll()
+                .defaultSuccessUrl("/users", true)
+                .successHandler(this::loginSuccessHandler)
+                .failureHandler(this::loginFailureHandler)
+                .and()
+                .logout().logoutUrl(LOGOUT_URL).permitAll()
+                .logoutSuccessHandler(this::logoutSuccessHandler)
+                .invalidateHttpSession(true)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new Http403ForbiddenEntryPoint())
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    public void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Override
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web) {
+        web.ignoring().antMatchers(ALL_WEB_IGNORING_MATCHERS);
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-        return source;
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
+        return provider;
+    }
+
+    private void loginSuccessHandler(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) {
+        response.setStatus(HttpStatus.OK.value());
+    }
+
+    private void loginFailureHandler(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException e) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    private void logoutSuccessHandler(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) {
+
+        response.setStatus(HttpStatus.OK.value());
     }
 }

@@ -62,12 +62,6 @@ public class RoleService extends AbstractRepository implements RoleRepository {
         return query.getSingleResult();
     }
 
-    @Override
-    public void init(String name) {
-        Role role = new Role.Builder().withName(name).build();
-        create(role);
-    }
-
     @Nullable
     @Override
     public Role remove(String roleId) {
