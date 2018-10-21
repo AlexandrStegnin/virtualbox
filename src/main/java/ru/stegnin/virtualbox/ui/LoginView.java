@@ -6,16 +6,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.stegnin.virtualbox.api.repository.AuthRepository;
 
 @Route("login")
-public class LoginForm extends VerticalLayout {
+public class LoginView extends VerticalLayout {
 
-    @Autowired
-    private AuthRepository authRepository;
+    private final AuthRepository authRepository;
 
-    public LoginForm() {
+    public LoginView(AuthRepository authRepository) {
+        this.authRepository = authRepository;
         init();
     }
 
@@ -31,12 +30,19 @@ public class LoginForm extends VerticalLayout {
         passwordField.setPlaceholder("*****");
 
         Button loginButton = new Button("Войти", e -> {
-            if (authRepository.authenticate(loginField.getValue(), passwordField.getValue()).isAuthenticated())
+            if (authenticated(loginField.getValue(), passwordField.getValue()))
                 this.getUI().ifPresent(ui -> ui.navigate("users"));
         });
 
         loginForm.add(loginField, passwordField, loginButton);
         add(loginForm);
+
+        setMargin(true);
+        setAlignItems(Alignment.CENTER);
+    }
+
+    private boolean authenticated(String login, String password) {
+        return authRepository.authenticate(login, password).isAuthenticated();
     }
 
 }

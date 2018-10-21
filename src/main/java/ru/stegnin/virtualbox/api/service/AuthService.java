@@ -19,13 +19,12 @@ import java.net.URI;
 public class AuthService extends AbstractRepository implements AuthRepository {
 
     private final ServerRepository serverRepository;
-    @Autowired
     private DaoAuthenticationProvider daoAuthenticationProvider;
 
     @Autowired
-    public AuthService(ServerRepository serverRepository/*, DaoAuthenticationProvider daoAuthenticationProvider*/) {
+    public AuthService(ServerRepository serverRepository, DaoAuthenticationProvider daoAuthenticationProvider) {
         this.serverRepository = serverRepository;
-//        this.daoAuthenticationProvider = daoAuthenticationProvider;
+        this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
 
     @Override
@@ -56,5 +55,10 @@ public class AuthService extends AbstractRepository implements AuthRepository {
             SecurityContextHolder.clearContext();
         }
         return authentication;
+    }
+
+    @Override
+    public void logout() {
+        SecurityContextHolder.clearContext();
     }
 }

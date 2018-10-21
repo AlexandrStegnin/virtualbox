@@ -2,6 +2,8 @@ package ru.stegnin.virtualbox.api.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.stegnin.virtualbox.api.model.User;
 import ru.stegnin.virtualbox.api.model.User_;
@@ -15,12 +17,18 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
 public class UserService extends AbstractRepository implements UserRepository {
     private Logger logger = Logger.getLogger(UserService.class.getName());
+
+    private final BCryptPasswordEncoder encoder;
+
+    @Autowired
+    public UserService(BCryptPasswordEncoder encoder) {
+        this.encoder = encoder;
+    }
 
     @Override
     public List<User> findAll() {
@@ -33,18 +41,30 @@ public class UserService extends AbstractRepository implements UserRepository {
     }
 
     @Override
+    public List<User> findAllByLogin(String login) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+        cq.where(cb.like(root.get(User_.LOGIN), login));
+        cq.select(root);
+        TypedQuery<User> query = em.createQuery(cq);
+        return query.getResultList();
+    }
+
+    @Override
     public User findOne(String userId) {
         return em.find(User.class, userId);
     }
 
     @Override
     public void delete(User user) {
-        em.remove(em.find(User.class, user.getId()));
+        em.remove(user);
     }
 
     @Override
-    public User create(User user) {
-        return em.merge(user);
+    public void create(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        em.persist(user);
     }
 
     @Override
@@ -79,7 +99,7 @@ public class UserService extends AbstractRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public @Nullable User findByEmail(@Nullable String email) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);
@@ -87,7 +107,7 @@ public class UserService extends AbstractRepository implements UserRepository {
         Predicate predicate = cb.like(root.get(User_.email), email);
         cq.where(predicate);
         TypedQuery<User> query = em.createQuery(cq);
-        return Optional.ofNullable(query.getSingleResult());
+        return query.getSingleResult();
     }
 
     @Override
@@ -120,14 +140,13 @@ public class UserService extends AbstractRepository implements UserRepository {
     }
 
     @Override
-    @Nullable
-    public User delete(@NotNull String userId) {
-        User user = em.find(User.class, userId);
-        if (user != null) {
-            em.remove(user);
-            return user;
-        } else {
-            return null;
-        }
+    public void delete(@NotNull String userId) {
+        delete(em.find(User.class, userId));
+    }
+
+    @Override
+    public List<User> saveAll(List<User> users) {
+        users.forEach(u -> em.merge(u));
+        return findAll();
     }
 }

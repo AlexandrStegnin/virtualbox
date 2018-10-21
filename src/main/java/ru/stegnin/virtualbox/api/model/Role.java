@@ -1,6 +1,5 @@
 package ru.stegnin.virtualbox.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,6 @@ import java.util.Set;
 @JsonIgnoreProperties("users")
 @EqualsAndHashCode(callSuper = true, exclude = "users")
 public class Role extends AbstractEntity implements Serializable {
-    @JsonIgnore
     private String name;
 
     @ManyToMany(mappedBy = "roles")

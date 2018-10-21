@@ -13,7 +13,6 @@ import ru.stegnin.virtualbox.api.repository.UserRepository;
 import ru.stegnin.virtualbox.settings.support.Constants;
 import ru.stegnin.virtualbox.settings.support.GenericResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -41,7 +40,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity
     create(@RequestBody User user) {
-        user = userRepo.create(user);
+        userRepo.create(user);
         message = new GenericResponse.Builder().withMessage("User : " + user + " created").build();
         logger.info(message.getMessage());
         return ResponseEntity.created(auth.getUri(this.getClass(), "create", (Object) user)).body(user);
@@ -74,7 +73,7 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity findAllUsers() {
-        List<User> allUsers = new ArrayList<>(userRepo.findAll());
+        List<User> allUsers = userRepo.findAll();
         return ResponseEntity.ok(allUsers);
     }
 
@@ -106,16 +105,10 @@ public class UserController {
      */
     @DeleteMapping(value = Constants.API_USERS_USER_ID)
     public ResponseEntity remove(@PathVariable(Constants.API_USER_ID) String userId) {
-        User user = userRepo.delete(userId);
-        if (user != null) {
-            message = new GenericResponse.Builder().withMessage("User with id " + userId + " deleted successful.").build();
-            logger.info(message.getMessage());
-            return ResponseEntity.ok().body(message.getMessage());
-        } else {
-            message = new GenericResponse.Builder().withError("User with id " + userId + " not found.").build();
-            logger.warning(message.getError());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message.getError());
-        }
+        userRepo.delete(userId);
+        message = new GenericResponse.Builder().withMessage("User with id " + userId + " deleted successful.").build();
+        logger.info(message.getMessage());
+        return ResponseEntity.ok().body(message.getMessage());
     }
 
     /**

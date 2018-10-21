@@ -14,4 +14,6 @@ public interface AuthRepository {
     boolean closeSession();
 
     Authentication authenticate(String login, String password);
+
+    void logout();
 }

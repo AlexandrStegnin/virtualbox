@@ -1,29 +1,32 @@
 package ru.stegnin.virtualbox.api.repository;
 
+import org.jetbrains.annotations.Nullable;
 import ru.stegnin.virtualbox.api.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserRepository {
     List<User> findAll();
+
+    List<User> findAllByLogin(String login);
 
     User findOne(String id);
 
     void delete(User user);
 
-    User create(User user);
+    void create(User user);
 
     User update(User user);
 
     User findByLogin(String login);
 
-    Optional<User> findByEmail(String email);
+    @Nullable User findByEmail(String email);
 
-    User delete(String userId);
+    void delete(String userId);
 
     boolean isLoginUnique(String login);
 
     boolean isEmailUnique(String email);
 
+    List<User> saveAll(List<User> users);
 }
