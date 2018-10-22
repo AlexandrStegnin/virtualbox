@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.stegnin.virtualbox.settings.support.CustomDateSerializer;
 
 import javax.persistence.Id;
@@ -22,11 +21,11 @@ public abstract class AbstractEntity {
     @NotNull
     private String id = "";
 
-    @Nullable
+    @NotNull
     @JsonSerialize(using = CustomDateSerializer.class)
     private LocalDate created;
 
-    @Nullable
+    @NotNull
     @JsonSerialize(using = CustomDateSerializer.class)
     private LocalDate updated;
 

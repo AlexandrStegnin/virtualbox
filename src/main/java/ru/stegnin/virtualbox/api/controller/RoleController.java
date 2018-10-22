@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.stegnin.virtualbox.api.repository.AuthRepository;
 import ru.stegnin.virtualbox.api.model.Role;
+import ru.stegnin.virtualbox.api.repository.AuthRepository;
 import ru.stegnin.virtualbox.api.repository.RoleRepository;
 import ru.stegnin.virtualbox.settings.support.Constants;
 import ru.stegnin.virtualbox.settings.support.GenericResponse;
@@ -18,11 +18,10 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping(Constants.API + Constants.API_ROLES)
 public class RoleController {
-    private Logger logger = Logger.getLogger(RoleController.class.getName());
-    private GenericResponse message;
-
     private final RoleRepository roleRepo;
     private final AuthRepository auth;
+    private Logger logger = Logger.getLogger(RoleController.class.getName());
+    private GenericResponse message;
 
     @Autowired
     public RoleController(RoleRepository roleRepo, AuthRepository auth) {
@@ -32,6 +31,7 @@ public class RoleController {
 
     /**
      * Создать роль
+     *
      * @param role - роль в формате json
      * @return - response с сообщением
      */
@@ -45,6 +45,7 @@ public class RoleController {
 
     /**
      * Найти роль по id
+     *
      * @param roleId - id пользователя
      * @return - response с сообщением
      */
@@ -61,6 +62,7 @@ public class RoleController {
 
     /**
      * Достать все роли
+     *
      * @return - response со списком пользователей
      */
     @GetMapping
@@ -71,8 +73,9 @@ public class RoleController {
 
     /**
      * Изменить роль
+     *
      * @param roleId - id роли
-     * @param role - данные роли для изменения в формате json
+     * @param role   - данные роли для изменения в формате json
      * @return - response с сообщением
      */
     @PutMapping(value = Constants.API_ROLES_ROLE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,6 +92,7 @@ public class RoleController {
 
     /**
      * Удалить роль по id
+     *
      * @param roleId - id роли
      * @return - response с сообщением
      */
