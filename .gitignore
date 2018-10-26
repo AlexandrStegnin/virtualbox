@@ -28,7 +28,7 @@ out/*
 target/*
 target
 .idea
-.mvn
+!.mvn/wrapper/maven-wrapper.jar
 mvnw*
 *.properties
 dependency-reduced-pom.xml

@@ -23,11 +23,11 @@ public abstract class AbstractEntity {
 
     @NotNull
     @JsonSerialize(using = CustomDateSerializer.class)
-    private LocalDate created;
+    private LocalDate created = LocalDate.now();
 
     @NotNull
     @JsonSerialize(using = CustomDateSerializer.class)
-    private LocalDate updated;
+    private LocalDate updated = LocalDate.now();
 
     @PrePersist
     private void prePersist() {
@@ -38,7 +38,6 @@ public abstract class AbstractEntity {
 
     @PreUpdate
     private void preUpdate() {
-        if (created == null) created = LocalDate.now();
         updated = LocalDate.now();
     }
 }
