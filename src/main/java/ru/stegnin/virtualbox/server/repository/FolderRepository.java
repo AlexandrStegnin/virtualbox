@@ -1,14 +1,15 @@
 package ru.stegnin.virtualbox.server.repository;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+import java.util.List;
 
 public interface FolderRepository {
-    Node create(String folderName) throws RepositoryException;
+    String create(String folderName);
 
-    void remove(String folderName) throws RepositoryException;
+    void remove(String folderName);
 
-    Node update(String newName, String oldName) throws RepositoryException;
+    void rename(String newName, String oldName);
 
-    Node findByFolderName(String folderName) throws RepositoryException;
+    List<String> findAllFolders();
+
+
 }
