@@ -14,6 +14,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Loggable
@@ -22,7 +23,7 @@ public class FolderRemoteService extends AbstractServerRepository implements Fol
 
     @Nullable
     @Override
-    public String create(String folderName) {
+    public boolean create(String folderName) {
         if (session == null) {
             try {
                 openSession("admin", "admin");
@@ -43,35 +44,39 @@ public class FolderRemoteService extends AbstractServerRepository implements Fol
             e.printStackTrace();
         }
 
-        return nodeName;
+        return nodeName != null;
     }
 
     @Override
-    public void remove(String folderName) {
+    public boolean remove(String folderName) {
         Node folderToDelete;
         try {
             folderToDelete = findByName(folderName);
             if (folderToDelete != null) {
                 folderToDelete.remove();
                 session.save();
+                return true;
             }
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override
-    public void rename(String newName, String oldName) {
+    public boolean rename(String newName, String oldName) {
         Node oldFolder;
         try {
             oldFolder = findByName(oldName);
             if (oldFolder != null) {
                 oldFolder.getSession().move(oldFolder.getPath(), oldFolder.getParent().getPath() + newName);
                 session.save();
+                return true;
             }
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     private void openSession(String login, @NotNull String password) throws MalformedURLException, RepositoryException {
@@ -95,6 +100,18 @@ public class FolderRemoteService extends AbstractServerRepository implements Fol
 
     @Override
     public List<String> findAllFolders() {
+        List<String> result = new ArrayList<>();
+        try {
+            final Node root = session.getRootNode();
+            final NodeIterator iterator = root.getNodes();
+            while (iterator.hasNext()) {
+                Node next = iterator.nextNode();
+                result.add(next.getName());
+            }
+            return result;
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
