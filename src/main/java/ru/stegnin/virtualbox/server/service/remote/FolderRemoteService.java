@@ -112,7 +112,11 @@ public class FolderRemoteService extends AbstractServerRepository implements Fol
             final NodeIterator iterator = root.getNodes();
             while (iterator.hasNext()) {
                 Node next = iterator.nextNode();
-                result.add(next.getName());
+                if (!next.getName().startsWith("jcr:") &&
+                        !next.getName().equalsIgnoreCase("rep:policy") &&
+                        !next.getName().endsWith("DS_Store")) {
+                    result.add(next.getName());
+                }
             }
             return result;
         } catch (RepositoryException e) {

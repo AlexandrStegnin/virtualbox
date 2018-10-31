@@ -39,15 +39,12 @@ public class SyncEventListener implements Observer {
 
     @Override
     public void update(Observable o, Object newPath) {
-        String pathName = (String) newPath;
-        if (!pathName.startsWith("jcr:") && !pathName.contains("DS_store") && !pathName.equalsIgnoreCase("rep:policy")) {
-            this.path = Paths.get(getRoot() + "/" + newPath);
-            if (Files.notExists(path, LinkOption.NOFOLLOW_LINKS)) {
-                try {
-                    Files.createDirectories(path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        this.path = Paths.get(getRoot() + "/" + newPath);
+        if (Files.notExists(path, LinkOption.NOFOLLOW_LINKS)) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

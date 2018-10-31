@@ -34,16 +34,20 @@ public class SyncScheduler {
         this.userHelper = userHelper;
     }
 
+    // TODO: 31.10.2018 Брать время синхронизации из настроек пользователя (User.settings)
+
     @Scheduled(cron = "* 0/2 * * * ?")
     public void sync() {
         if (!running) {
             syncEvent.addObserver(syncEventListener);
-            running = true;
             List<String> remoteFolders = folderRemoteRepository.findAllFolders();
             List<String> localFolders = folderLocalRepository.findAllFolders();
-            syncFolders(remoteFolders, localFolders);
-            syncFolders(localFolders, remoteFolders);
-            running = false;
+            if ((remoteFolders.size() != localFolders.size()) || !remoteFolders.containsAll(localFolders)) {
+                running = true;
+                syncFolders(remoteFolders, localFolders);
+                syncFolders(localFolders, remoteFolders);
+                running = false;
+            }
         }
     }
 
