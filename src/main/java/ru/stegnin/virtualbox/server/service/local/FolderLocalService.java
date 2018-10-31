@@ -8,6 +8,10 @@ import ru.stegnin.virtualbox.server.repository.FolderRepository;
 import ru.stegnin.virtualbox.settings.security.SecurityUserHelper;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +55,14 @@ public class FolderLocalService implements FolderRepository {
 
     @NotNull
     private File getRoot() {
-        return new File(userHelper.getUserSyncFolder());
+        final Path rootDir = Paths.get(userHelper.getUserSyncFolder());
+        if (Files.notExists(rootDir)) {
+            try {
+                Files.createDirectories(rootDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return rootDir.toFile();
     }
 }

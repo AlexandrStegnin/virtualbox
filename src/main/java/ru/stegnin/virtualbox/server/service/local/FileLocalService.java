@@ -24,8 +24,8 @@ public class FileLocalService implements FileRepository {
     }
 
     @Override
-    public boolean create(String fileName) {
-        final File file = new File(getRoot(), fileName);
+    public boolean create(File root, String fileName) {
+        final File file = new File(root, fileName);
         return file.mkdirs();
     }
 

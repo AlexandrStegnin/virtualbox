@@ -3,11 +3,12 @@ package ru.stegnin.virtualbox.server.repository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.List;
 
 public interface FileRepository {
 
-    boolean create(String fileName);
+    boolean create(File root, String fileName);
 
     boolean remove(String fileName);
 

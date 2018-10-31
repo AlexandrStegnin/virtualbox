@@ -21,7 +21,6 @@ import java.util.List;
 @Service
 public class FolderRemoteService extends AbstractServerRepository implements FolderRepository {
 
-    @Nullable
     @Override
     public boolean create(String folderName) {
         if (session == null) {
@@ -101,6 +100,13 @@ public class FolderRemoteService extends AbstractServerRepository implements Fol
     @Override
     public List<String> findAllFolders() {
         List<String> result = new ArrayList<>();
+        if (session == null) {
+            try {
+                openSession("admin", "admin");
+            } catch (MalformedURLException | RepositoryException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             final Node root = session.getRootNode();
             final NodeIterator iterator = root.getNodes();
