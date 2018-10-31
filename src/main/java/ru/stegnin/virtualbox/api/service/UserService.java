@@ -15,11 +15,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 @Service
+@Transactional
 public class UserService extends AbstractRepository implements UserRepository {
     private Logger logger = Logger.getLogger(UserService.class.getName());
 
@@ -58,7 +60,7 @@ public class UserService extends AbstractRepository implements UserRepository {
 
     @Override
     public void delete(User user) {
-        em.remove(user);
+        em.remove(findOne(user.getId()));
     }
 
     @Override
@@ -76,8 +78,8 @@ public class UserService extends AbstractRepository implements UserRepository {
         if (user.getEmail().isEmpty()) {
             user.setEmail(oldUser.getEmail());
         }
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(oldUser.getRoles());
+        if (user.getRole() == null) {
+            user.setRole(oldUser.getRole());
         }
         if (oldUser.isEnabled()) {
             user.setEnabled(true);

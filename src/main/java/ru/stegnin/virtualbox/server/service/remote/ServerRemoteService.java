@@ -1,4 +1,4 @@
-package ru.stegnin.virtualbox.server.service;
+package ru.stegnin.virtualbox.server.service.remote;
 
 import org.apache.jackrabbit.rmi.repository.URLRemoteRepository;
 import org.springframework.stereotype.Service;

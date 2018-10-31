@@ -8,14 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 @Data
 @Entity
 @NoArgsConstructor
-@ToString(exclude = "roles")
+@ToString(exclude = "role")
 @Table(name = "ApplicationUser")
-@EqualsAndHashCode(callSuper = true, exclude = "roles")
+@EqualsAndHashCode(callSuper = true, exclude = "role")
 public class User extends AbstractEntity implements Serializable {
     @NotNull
     @Column(unique = true, nullable = false)
@@ -31,11 +30,19 @@ public class User extends AbstractEntity implements Serializable {
 
     private boolean enabled;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "UsersRoles",
             joinColumns = {@JoinColumn(name = "UserId")},
             inverseJoinColumns = {@JoinColumn(name = "RoleId")}
     )
-    private Set<Role> roles;
+    private Role role;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private UserSettings settings;
+
+    @PrePersist
+    public void setDefaultSettings() {
+        setSettings(new UserSettings());
+    }
 }

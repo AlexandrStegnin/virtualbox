@@ -1,13 +1,10 @@
 package ru.stegnin.virtualbox.settings.security;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.stegnin.virtualbox.api.repository.UserRepository;
-
-import static java.util.Collections.emptyList;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -23,6 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (applicationUser == null) {
             throw new UsernameNotFoundException(username);
         }
-        return new User(applicationUser.getLogin(), applicationUser.getPassword(), emptyList());
+        return new SecurityUser(applicationUser);
     }
 }
